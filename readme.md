@@ -61,6 +61,8 @@ The Web Haptics API uses a predefined list of effects with an optional intensity
 
 For both imperative and declarative APIs, target selection follows one shared model: dispatch to the most recent input device. If that device is not haptics-capable, no haptic is played. User agents do not reroute to another connected haptics-capable device.
 
+Both APIs are governed by a `"haptics"` [permissions policy](https://w3c.github.io/webappsec-permissions-policy/) with a default allowlist of `"self"`. Cross-origin iframes must receive explicit delegation (e.g. `allow="haptics"`) to play haptics. See [Security](#security) for full details.
+
 Both the imperative and declarative paths share the same effect vocabulary.
 
 ### Effect Vocabulary
@@ -274,6 +276,15 @@ To avoid introducing a new fingerprinting vector, the API does not expose means 
 **Imperative API:** Requires sticky user activation. No permission gate.
 
 **Declarative API:** Selector start-matching events from direct user interaction may fire haptics without additional activation checks. Activation checks apply to script-initiated selector start-matching events (e.g. `classList.add()` triggering a selector match), which require sticky user activation; if activation is not present, the trigger is ignored.
+
+**Permissions Policy:** The Web Haptics API is controlled by a [permissions policy](https://w3c.github.io/webappsec-permissions-policy/) with a default allowlist of `"self"`. This means:
+
+- Same-origin iframes inherit haptics access from the top frame.
+- Cross-origin iframes are denied haptics by default. The embedder must explicitly delegate access:
+  ```html
+  <iframe src="https://cross-origin.com/widget" allow="haptics"></iframe>
+  ```
+- If the permissions policy for haptics is disabled in a given context, imperative `navigator.playHaptics()` calls are silently ignored and declarative `@haptic` rules do not fire.
 
 ## Open Questions
 
