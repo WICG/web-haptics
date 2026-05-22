@@ -271,7 +271,13 @@ To avoid introducing a new fingerprinting vector, the API does not expose means 
 
 ### Security
 
-**Anti-abuse:** User agents may enforce throttling on both APIs. Haptics produce no lasting effect — the user can navigate away at any time. If abuse patterns emerge, user agents may suppress haptics entirely for the offending origin.
+**Anti-abuse:** Haptics produce no lasting effect — the user can navigate away at any time, immediately ending any haptic output, so the stakes are low. User agents also have several tools available to prevent abuse:
+
+- **Throttling** — rate-limit haptic triggers on both APIs.
+- **Origin suppression** — suppress haptics entirely for origins exhibiting abuse patterns.
+- **User controls** — expose haptics settings at the global level (e.g., a browser-wide toggle) or per-origin (e.g., site-specific settings), allowing users to manage their haptics experience.
+
+These controls should not be observable by web content to avoid introducing a new fingerprinting vector.
 
 **Imperative API:** Requires sticky user activation. No permission gate.
 
