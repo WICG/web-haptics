@@ -28,10 +28,10 @@ This document is a starting point for engaging the community and standards bodie
 
 Modern operating systems have embraced haptics as a core part of user experience — providing subtle, low-latency tactile cues that reinforce visual and auditory feedback. These signals improve confidence, precision, and delight in everyday interactions. The Web Haptics API proposes a semantic, cross-platform interface that connects web applications to native haptic capabilities. By focusing on intent-driven effects, the API enables web apps to deliver tactile feedback consistent with OS design principles, while preserving user privacy and security.
 
-This proposal offers two complementary mechanisms:
+This proposal currently includes two complementary mechanisms:
 
-1. **Declarative API (CSS)** — a nested `@haptic` at-rule inside style rules that fires haptic effects when the rule starts matching.
-2. **Imperative API (JS)** — `navigator.playHaptics(effect, intensity)` for interactions that require runtime logic or have no corresponding CSS state change.
+1. **Imperative API (JS)** — `navigator.playHaptics(effect, intensity)` for interactions that require runtime logic or have no corresponding CSS state change.
+2. **Declarative API (CSS)** — a CSS haptics model for no-JavaScript reactive feedback. This explainer currently evaluates two declarative shapes: a nested `@haptic` at-rule shape and an event-trigger shape.
 
 ## User-Facing Problem
 
@@ -64,6 +64,8 @@ For both imperative and declarative APIs, target selection follows one shared mo
 Both APIs are governed by a `"haptics"` [permissions policy](https://w3c.github.io/webappsec-permissions-policy/) with a default allowlist of `"self"`. Cross-origin iframes must receive explicit delegation (e.g. `allow="haptics"`) to play haptics. See [Security](#security) for full details.
 
 Both the imperative and declarative paths share the same effect vocabulary.
+
+For the declarative path, this explainer currently documents two candidate CSS shapes under evaluation. Both use the same effect vocabulary, intensity model, target-selection model, and security/privacy constraints; they differ primarily in how haptic triggering is expressed.
 
 ### Effect Vocabulary
 
