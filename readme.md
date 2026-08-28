@@ -107,7 +107,7 @@ The declarative API currently presents two options. The nested `@haptic` model a
 
 #### Option 1: Nested `@haptic` at-rule
 
-The `@haptic` at-rule nests inside a style rule and declares which effect to fire and at what intensity. The haptic fires once when the containing rule transitions into matching an element.
+The `@haptic` at-rule nests inside a style rule and declares which effect to fire and at what intensity.
 
 **Syntax:**
 
@@ -124,7 +124,7 @@ The `@haptic` at-rule nests inside a style rule and declares which effect to fir
 
 **Triggering behavior:**
 
-- **Per-rule tracking.** Each `@haptic` tracks its own parent rule's selector independently. Two rules with the same effect on the same element both fire:
+- **Per-rule tracking.** Each `@haptic` tracks its own parent rule's selector independently. When two rules with the same effect begin matching the same element at different times, each fires:
   ```css
   button:hover  { color: blue;  @haptic tick; }
   button:active { scale: 0.95;  @haptic tick; }
@@ -144,9 +144,9 @@ button:active {
 
 #### Option 2: Event-trigger model
 
-This option maps semantic browser events to haptic effects through trigger-based declarative syntax. Instead of firing from selector start-matching, haptics fire when associated triggers fire. This is intended to align with the [CSS Animation Triggers](https://drafts.csswg.org/animation-triggers-1/) model.
+This option maps semantic browser events to haptic effects through trigger-based declarative syntax. Instead of firing from selector start-matching, haptics fire when associated triggers fire. [CSS Animation Triggers](https://drafts.csswg.org/animation-triggers-1/) defines event-trigger firing, naming, scoping, targeting, and propagation; Web Haptics defines how a haptic effect consumes a fired trigger.
 
-`event-trigger` defines named triggers from events. `haptic` consumes those triggers to play effects. In the examples below, the declarations apply to each element matched by the style rule; event targeting and propagation follow Animation Triggers.
+`event-trigger` defines named triggers from events. `haptic` consumes those triggers to play effects.
 
 **Named trigger syntax:**
 
@@ -171,18 +171,17 @@ button {
 haptic: [ <trigger-name> <effect-name> <intensity>? ]#
 ```
 
+Here, `#` means one or more comma-separated mappings—for example, `haptic: --press hint 0.4, --activate align 0.8`.
+
 - `<effect-name>` — one of `hint`, `edge`, `tick`, `align`.
 - `<intensity>` *(optional)* — a `<number>` between 0.0 and 1.0. Defaults to 1.0.
-
-Animation Triggers defines event triggers, including their firing, naming, and scoping semantics. Web Haptics defines how a haptic effect consumes a fired trigger. The inline form creates an anonymous trigger rather than requiring the author to name one.
 
 **Triggering behavior:**
 
 - **Trigger activation.** Each time a referenced named or anonymous trigger fires, its mapping is eligible to produce a haptic request.
 - **Same-element resolution.** The CSS cascade determines the computed `haptic` value. If multiple mappings in that value activate in the same processing update, the last matching item produces the request.
-- **Script-generated events.** Whether script-generated events can fire an event trigger follows Animation Triggers. Any additional haptics-specific activation restrictions would be defined by Web Haptics.
 
-**Eligible triggers.** Haptics are limited to trigger activations causally associated with user input. The exact eligibility rules—including how scroll-snap interactions and script-generated events qualify—remain to be defined.
+**Eligible triggers.** Haptics are limited to trigger activations causally associated with user input. Animation Triggers determines whether script-generated events can fire a trigger; Web Haptics defines any additional haptics-specific activation restrictions. The exact eligibility rules—including how scroll-snap interactions and script-generated events qualify—remain to be defined.
 
 **Example — reusable trigger with multiple event sources:**
 
@@ -197,7 +196,6 @@ Animation Triggers defines event triggers, including their firing, naming, and s
 
 The following operational behavior applies to both options:
 
-- **Effects and intensity.** Both options produce the same one-shot haptic effects and use the effect vocabulary and intensity model defined above.
 - **No initial haptic.** Neither option plays a haptic merely because the page is initially rendered. A subsequent selector-matching change or trigger event is required.
 - **Request coalescing.** A user agent fires at most one haptic per target device per rendering frame. After accepting one request, it suppresses later requests for that device in the same frame. User agents may apply additional throttling.
 - **Target selection.** The most recent input device is targeted. If it is not haptics-capable, no haptic fires.
