@@ -202,11 +202,13 @@ The following operational behavior applies to both options:
 
 ## Real-World Scenarios
 
-The following examples demonstrate how declarative haptics and the imperative API together cover common use cases.
+The following examples demonstrate how the two declarative options and the imperative API cover common use cases.
 
 ### E-Commerce "Add to Cart" Button
 
 A tactile press confirmation:
+
+**Option 1: Nested `@haptic`**
 
 ```css
 .add-to-cart:active {
@@ -215,15 +217,44 @@ A tactile press confirmation:
 }
 ```
 
+**Option 2: Event-trigger**
+
+```css
+.add-to-cart {
+  haptic: click align 0.8;
+}
+
+.add-to-cart:active {
+  scale: 0.95;
+}
+```
+
 ### Photo Carousel
 
 A horizontal photo carousel with a tactile tick on each snap — using the [`:snapped` pseudo-class](https://drafts.csswg.org/css-scroll-snap-2/#snapped) from CSS Scroll Snap 2. Note: `:snapped` is currently draft-level and not yet widely implemented:
 
+**Option 1: Nested `@haptic`**
+
 ```css
 .carousel > .photo:snapped {
+  scale: 1.02;
   @haptic tick 0.5;
 }
 ```
+
+**Option 2: Event-trigger**
+
+```css
+.carousel > .photo:snapped {
+  scale: 1.02;
+}
+
+.carousel {
+  haptic: scrollsnapchanging tick 0.5;
+}
+```
+
+`scrollsnapchanging` is not currently listed as a supported event source in Animation Triggers. This example would require adding it or allowing such DOM events generically.
 
 ### Drag-to-Snap Divider
 
