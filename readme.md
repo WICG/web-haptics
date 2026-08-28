@@ -101,9 +101,9 @@ The API always returns `undefined`. No haptic is played if the last input device
 
 ### Declarative API (CSS)
 
-The declarative API introduces a nested `@haptic` at-rule that fires a haptic effect when the containing rule starts matching — no JavaScript required.
+The declarative API currently presents two options for discussion and comparison.
 
-#### `@haptic` at-rule
+#### Option 1: Nested `@haptic` at-rule
 
 The `@haptic` at-rule nests inside a style rule and declares which effect to fire and at what intensity. The haptic fires once when the containing rule transitions into matching an element. It does not fire on initial style computation — only on subsequent transitions from not-matching to matching.
 
@@ -150,6 +150,55 @@ button:active {
   60%  { transform: translateY(-20%); }
   100% { transform: translateY(0);  @haptic align 0.5; }
 }
+```
+
+#### Option 2: Event-trigger model
+
+This option maps semantic browser events to haptic effects through trigger-based declarative syntax. Instead of firing from selector start-matching, haptics fire when associated triggers fire. This is intended to align with the [CSS Animation Triggers](https://drafts.csswg.org/animation-triggers-1/) model.
+
+`event-trigger` defines named triggers from events. `haptic` consumes those triggers to play effects.
+
+**Illustrative syntax (named trigger):**
+
+```css
+event-trigger: --activate click;
+haptic: --activate align 0.8;
+```
+
+For common one-off cases, an inline/anonymous form may be used:
+
+```css
+haptic: click align 0.8;
+```
+
+- `<effect-name>` — one of `hint`, `edge`, `tick`, `align`.
+- `<intensity>` *(optional)* — a `<number>` between 0.0 and 1.0. Defaults to 1.0.
+- Trigger/event semantics are inherited from Animation Triggers.
+
+**Behavior:**
+
+- **Explicit event causality.** A haptic fires when its associated trigger fires.
+- **No initial fire.** Does not fire on initial style computation — only on subsequent trigger events.
+- **Same-element dedup.** When multiple haptic declarations are eligible on the same element for the same trigger in the same rendering update, at most one fires. Winner is determined by specificity, then document order.
+- **Cross-element coalescing.** User agents may fire at most one haptic per target device per frame.
+- **Target selection.** Same model as the imperative API: the most recent input device is targeted. If not haptics-capable, no haptic fires.
+- **Script-initiated dispatch.** Script-initiated trigger dispatch (for example, `dispatchEvent`) requires sticky user activation.
+
+**Illustrative event scope for v1:** a conservative profile can prioritize discrete intent events such as `click`, `change`, and `keypress("Enter")`; high-frequency events may require stricter throttling/coalescing policy.
+
+**Example — button activation:**
+
+```css
+button {
+  haptic: click align;
+}
+```
+
+**Example — reusable composed trigger:**
+
+```css
+event-trigger: --submit click keypress("Enter");
+haptic: --submit align 0.9;
 ```
 
 ## Real-World Scenarios
