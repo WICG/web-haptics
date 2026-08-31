@@ -301,17 +301,15 @@ The current set of four effects is intentionally small. If the effect vocabulary
 
 A coarse user-preference media feature could be considered in a future phase (for example, `prefers-haptics: reduce | no-preference`) to help authors adapt non-essential feedback. This is deferred from v1 to avoid expanding API surface before concrete implementation and privacy review feedback.
 
-### Trigger phase control (`exit` / `both`)
-
-v1 declarative triggering is intentionally enter-only to keep the model simple and predictable. A future extension could add explicit phase control (e.g. `exit` and `both`) if concrete use cases justify the extra surface area and arbitration complexity.
-
 ## Alternatives Considered
 
 ### CSS alternatives
 
+This section records alternatives evaluated while developing the nested `@haptic` model. It does not yet incorporate the event-trigger model now under evaluation; once a declarative approach is selected, this section will be updated to document the other approach as an alternative.
+
 We evaluated five declarative CSS models. All work with any selector type (pseudo-classes, classes, attributes). CSS has existing temporal mechanisms (transitions, animations) but no precedent for a one-shot, fire-and-forget side effect triggered by state change — so every model introduces some novelty. Given that, we prioritized syntax–semantics match — does the syntax honestly convey what the code does?
 
-- **A. Nested `@haptic` (primary)** — an at-rule nested inside a style rule; fires when the parent selector starts matching. See [Declarative API](#declarative-api-css).
+- **A. Nested `@haptic`** — an at-rule nested inside a style rule; fires when the parent selector starts matching. See [Declarative API](#declarative-api-css).
 - **B. Standalone `@haptic-trigger`** — a top-level at-rule with a selector prelude; fires when the selector starts matching.
   ```css
   @haptic-trigger button:active { effect: align; intensity: 0.8; }
@@ -385,7 +383,7 @@ These controls should not be observable by web content to avoid introducing a ne
   ```html
   <iframe src="https://cross-origin.com/widget" allow="haptics"></iframe>
   ```
-- If the permissions policy for haptics is disabled in a given context, imperative `navigator.playHaptics()` calls are silently ignored and declarative `@haptic` rules do not fire.
+- If the permissions policy for haptics is disabled in a given context, imperative `navigator.playHaptics()` calls are silently ignored and declarative haptic requests are ignored.
 
 ## Open Questions
 
