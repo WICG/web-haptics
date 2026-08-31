@@ -200,6 +200,22 @@ The following operational behavior applies to both options:
 - **Request coalescing.** A user agent fires at most one haptic per target device per rendering frame. After accepting one request, it suppresses later requests for that device in the same frame. User agents may apply additional throttling.
 - **Target selection.** The most recent input device is targeted. If it is not haptics-capable, no haptic fires.
 
+#### Comparison
+
+The two options share the same haptic effects and operational behavior, but differ in how haptics are associated with interactions and in the resulting authoring, timing, and standardization tradeoffs.
+
+| Dimension | Option 1: Nested `@haptic` | Option 2: Event-trigger |
+|---|---|---|
+| **Core model** | Fires when a CSS rule starts matching an element | Fires when an associated event trigger activates |
+| **Authoring** | Very concise for interactions represented by CSS states | Concise with anonymous triggers; named triggers add syntax when reuse is needed |
+| **Semantic coverage and timing** | Expresses entry into selector-observable states, which may occur at a different interaction phase than intended | Expresses supported events directly, allowing authors to select an interaction phase, but requires an appropriate eligible trigger source |
+| **Visual co-location** | Naturally colocates haptics with styles for the same state | May separate them when the event source and visual state belong to different elements or phases |
+| **Actuation path and latency** | Requires selector matching and style processing to discover the haptic | Can make the event-to-haptic mapping known ahead of time, potentially allowing actuation closer to input |
+| **Composition and reuse** | Each matching rule independently declares its haptic | Named triggers can potentially be shared across haptics, animations, and future trigger consumers |
+| **Standardization and dependencies** | Self-contained within Web Haptics | Depends on the evolving Animation Triggers model and may require additional eligible trigger sources, such as scroll-snap events |
+
+In summary, the nested model prioritizes simplicity, self-containment, and selector integration. The event-trigger model prioritizes explicit causality, event-phase control, composition, and lower-latency potential, at the cost of additional dependencies and trigger-source work.
+
 ## Real-World Scenarios
 
 The following examples demonstrate how the two declarative options and the imperative API cover common use cases.
