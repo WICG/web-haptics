@@ -414,6 +414,7 @@ Relevant web APIs:
 Relevant CSS specifications:
 - [CSS Transitions](https://drafts.csswg.org/css-transitions-1/)
 - [CSS Animations](https://drafts.csswg.org/css-animations-1/)
+- [CSS Animation Triggers](https://drafts.csswg.org/animation-triggers-1/)
 - [CSS Scroll Snap](https://drafts.csswg.org/css-scroll-snap-1/)
 - [CSS Scroll Snap 2](https://drafts.csswg.org/css-scroll-snap-2/)
 
@@ -426,7 +427,7 @@ We intend to seek feedback via:
 - Incubation in WICG.
 - Discuss within Device & Sensors Working Group.
 - Cross‑share with Haptic Industry Forum (non‑standards venue) to align on primitives vocabulary and invite suppliers/OEMs to comment publicly in WICG issues.
-- Engage CSS Working Group for review of nested `@haptic` primary design and alternative declarative models.
+- Engage CSS Working Group for review of the two declarative CSS candidates.
 
 ## References & Acknowledgements
 
