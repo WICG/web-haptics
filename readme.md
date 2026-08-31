@@ -341,7 +341,7 @@ We evaluated five declarative CSS models. All work with any selector type (pseud
 
 | Model | Syntax–semantics match | Co-located | Concise | Re-trigger safe |
 |---|:---:|:---:|:---:|:---:|
-| **A. Nested `@haptic`** (primary) | ✅ At-rule signals one-shot action | ✅ Same rule block | ✅ One-liner | ✅ Per-rule tracking |
+| **A. Nested `@haptic`** | ✅ At-rule signals one-shot action | ✅ Same rule block | ✅ One-liner | ✅ Per-rule tracking |
 | **B. Standalone `@haptic-trigger`** | ✅ At-rule signals one-shot action | ❌ Separate block | ❌ Two blocks | ✅ Per-rule tracking |
 | **C. Computed-value property** | ❌ Property syntax implies ongoing state | ✅ Same rule block | ✅ Most concise | ❌ Same-value collision |
 | **D. Animation-trigger** | ⚠️ `haptic-name` reads as state, like C | ⚠️ Split (define + attach) | ❌ Define + attach | ⚠️ Workaround via distinct names |
@@ -374,7 +374,7 @@ These controls should not be observable by web content to avoid introducing a ne
 
 **Imperative API:** Requires sticky user activation. No permission gate.
 
-**Declarative API:** Selector start-matching events from direct user interaction may fire haptics without additional activation checks. Activation checks apply to script-initiated selector start-matching events (e.g. `classList.add()` triggering a selector match), which require sticky user activation; if activation is not present, the trigger is ignored.
+**Declarative API:** A declarative haptic request caused directly by user interaction may fire without an additional activation check. Requests caused by script-driven selector changes or trigger activations require sticky user activation; without it, the haptic request is ignored.
 
 **Permissions Policy:** The Web Haptics API is controlled by a [permissions policy](https://w3c.github.io/webappsec-permissions-policy/) with a default allowlist of `"self"`. This means:
 
