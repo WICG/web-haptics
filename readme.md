@@ -208,8 +208,9 @@ The two options share the same haptic effects and operational behavior, but diff
 |---|---|---|
 | **Core model** | Fires when a CSS rule starts matching an element | Fires when an associated event trigger activates |
 | **Authoring** | Very concise for interactions represented by CSS states | Concise with anonymous triggers; named triggers add syntax when reuse is needed |
-| **Semantic coverage and timing** | Expresses entry into selector-observable states, which may occur at a different interaction phase than intended | Expresses supported events directly, allowing authors to select an interaction phase, but requires an appropriate eligible trigger source |
 | **Visual co-location** | Naturally colocates haptics with styles for the same state | May separate them when the event source and visual state belong to different elements or phases |
+| **Causality** | The same state can be entered through different causes; the declaration does not identify which one | The declaration explicitly identifies the intended event source, reducing the likelihood of unintended activation |
+| **Coverage and timing** | Limited to selector-observable state entry; timing follows when that state begins | Limited to available trigger sources; authors can select among supported interaction phases |
 | **Actuation path and latency** | Requires selector matching and style processing to discover the haptic | Can make the event-to-haptic mapping known ahead of time, potentially allowing actuation closer to input |
 | **Composition and reuse** | Each matching rule independently declares its haptic | Named triggers can potentially be shared across haptics, animations, and future trigger consumers |
 | **Standardization and dependencies** | Self-contained within Web Haptics | Depends on the evolving Animation Triggers model and may require additional eligible trigger sources, such as scroll-snap events |
@@ -305,7 +306,8 @@ A coarse user-preference media feature could be considered in a future phase (fo
 
 ### CSS alternatives
 
-This section records alternatives evaluated while developing the nested `@haptic` model. It does not yet incorporate the event-trigger model now under evaluation; once a declarative approach is selected, this section will be updated to document the other approach as an alternative.
+> [!NOTE]
+> This section records alternatives evaluated while developing the nested `@haptic` model. It does not yet incorporate the event-trigger model now under evaluation; once a declarative approach is selected, this section will be updated to document the other approach as an alternative.
 
 We evaluated five declarative CSS models. All work with any selector type (pseudo-classes, classes, attributes). CSS has existing temporal mechanisms (transitions, animations) but no precedent for a one-shot, fire-and-forget side effect triggered by state change — so every model introduces some novelty. Given that, we prioritized syntax–semantics match — does the syntax honestly convey what the code does?
 
