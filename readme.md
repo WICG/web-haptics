@@ -70,11 +70,13 @@ Both the imperative and declarative paths share the same effect vocabulary.
 | Value   | Description | When to reach for it |
 |---------|-------------|----------------------|
 | `hint`  | A light, subtle cue that signals something is interactive or an action may follow. | Focusing an input field, entering a drop zone during drag. |
-| `edge`  | A heavy boundary signal that indicates reaching the end of a range or hitting a limit. | Validation failure, pull-to-refresh threshold, scroll hitting a boundary. |
+| `edge`  | A heavy boundary signal that indicates reaching the end of a range or hitting a limit. | Pull-to-refresh threshold, scroll hitting a boundary, reaching the end of a control range. |
 | `tick`  | A firm pulse that marks discrete changes, like moving through a list or toggling a switch. | Scroll-snap landing, stepping through picker values, toggling a switch. |
-| `align` | A crisp confirmation when an object locks into place or aligns with guides or edges. | Drag-to-snap, window snapping to screen edges, zoom snapping to 100%. |
+| `align` | A crisp pulse when an object locks into place or aligns with guides or edges. | Drag-to-snap, window snapping to screen edges, zoom snapping to 100%. |
+| `success` | A confirmation that communicates the successful completion of an action. | Form submitted, file saved, transaction completed, operation finished successfully. |
+| `error` | A confirmation that communicates that an action failed or could not be completed. | Form submission failed, save failed, operation rejected, action could not be completed. |
 
-The table below illustrates example mappings of the predefined effects (hint, edge, tick, align) to representative platform-native feedback patterns across Windows, macOS, iOS, and Android. These mappings are illustrative examples only. User agents may choose different mappings, including synthesizing custom effects from lower-level primitives and parameters. The API standardizes the developer-facing intent, while the underlying realization remains platform-defined.
+hint, edge, tick, and align provide feedback during an interaction, while success and error communicate the outcome of a completed action. The mappings below are illustrative and may vary by platform. User agents may choose different mappings, including synthesizing custom effects from lower-level primitives and parameters.
 
 | Web Haptics | Windows | macOS | iOS | Android |
 |:-----------:|:-------:|:-----:|:---:|:-------:|
@@ -82,6 +84,8 @@ The table below illustrates example mappings of the predefined effects (hint, ed
 | edge | collide | generic | soft impact | long_press |
 | tick | step | generic | selection | segment_frequent_tick |
 | align | align | alignment | rigid impact | segment_tick |
+| success | success | generic | success | confirm |
+| error | error | generic | error | reject |
 
 **Intensity** is always a normalized value between 0.0 and 1.0. If the platform exposes a system-level intensity setting, the effective intensity is `system intensity × developer-specified intensity`. Intensity defaults to 1.0 if left unspecified.
 
@@ -94,7 +98,7 @@ navigator.playHaptics(effect, intensity);
 ```
 
 **Parameters:**
-- `effect` — one of the predefined effect names: `"hint"`, `"edge"`, `"tick"`, `"align"`.
+- `effect` — one of the predefined effect names: `"hint"`, `"edge"`, `"tick"`, `"align"`, `"success"`, `"error"`.
 - `intensity` *(optional)* — a normalized value between 0.0 and 1.0. Defaults to 1.0.
 
 The API always returns `undefined`. No haptic is played if the last input device is not haptics-capable, and the user agent does not reroute to another connected haptics-capable device. If sticky user activation has expired, the call is silently ignored.
@@ -116,7 +120,7 @@ The `@haptic` at-rule nests inside a style rule and declares which effect to fir
 }
 ```
 
-- `<effect-name>` — one of `hint`, `edge`, `tick`, `align`.
+- `<effect-name>` — one of `hint`, `edge`, `tick`, `align`, `success`, `error`.
 - `<intensity>` *(optional)* — a `<number>` between 0.0 and 1.0. Defaults to 1.0.
 
 
@@ -198,9 +202,9 @@ divider.addEventListener('pointermove', (e) => {
 
 The following extensions are out of scope for this initial proposal but represent natural next steps that could broaden the declarative surface.
 
-### Custom haptic effects
+### Additional predefined effects
 
-The current set of four effects is intentionally small. If the effect vocabulary grows (e.g. platform-specific effects or developer-defined waveforms), the API should accommodate them without syntax changes.
+The current set of predefined effects is intentionally small. If the effect vocabulary grows, the API should accommodate additional predefined effects without syntax changes.
 
 ### User preference media feature (`prefers-haptics`)
 
@@ -295,11 +299,11 @@ These controls should not be observable by web content to avoid introducing a ne
 ## Open Questions
 
 - **Which declarative model should anchor standardization?** This proposal uses a nested `@haptic` at-rule as the primary path — its at-rule syntax matches the one-shot, fire-and-forget nature of haptics, it co-locates with visual styles, and it avoids re-trigger pitfalls. The standalone `@haptic-trigger` separates haptics into dedicated blocks; the computed-value property is the most concise; the animation-trigger model offers reusable named patterns. We welcome feedback on which tradeoffs best serve developers.
-- **Should any [future extension](#future-extensions) be promoted to v1?** Custom effects and other deferred extensions are listed above. If any is critical for initial adoption, we would like to hear which and why.
+- **Should any [future extension](#future-extensions) be promoted to v1?** Additional predefined effects and other deferred extensions are listed above. If any is critical for initial adoption, we would like to hear which and why.
 - **Is the proposed split activation model right for v1?** Current proposal: direct user-interaction selector start-matching events can fire declarative haptics without additional activation checks, while script-initiated start-matching events require sticky user activation. Should this split be retained, or should declarative triggers be uniformly activation-gated?
 - **Should a user-preference media feature be added in a future phase?** v1 introduces no media query. A possible extension is a coarse preference signal (e.g. `prefers-haptics: reduce | no-preference`) if there is concrete use-case and privacy review support.
 - **Should a dedicated `scroll-snap-haptic` property be added if `:snapped` does not ship?** The current proposal relies on the [`:snapped` pseudo-class](https://drafts.csswg.org/css-scroll-snap-2/#snapped) from CSS Scroll Snap 2 for scroll-snap haptics (e.g. `.slide:snapped { @haptic tick; }`). If `:snapped` does not ship or is significantly delayed, a dedicated `scroll-snap-haptic` CSS property on the scroll container could serve as a self-contained fallback. We welcome feedback on whether the `:snapped` dependency is acceptable for v1.
-- **Feedback on the predefined effect vocabulary?** The current set (`hint`, `edge`, `tick`, `align`) is intentionally small. Feedback is needed on whether these four effects cover the most common interaction patterns and map well to native haptic primitives across platforms.
+- **Feedback on the predefined effect vocabulary?** The current set (`hint`, `edge`, `tick`, `align`, `success`, `error`) is intentionally small. Feedback is needed on whether these effects cover the most common interaction patterns and map well to native haptic primitives across platforms.
 - **Should the API return whether haptics was successfully played?** Currently, `playHaptics` always returns `undefined` to avoid exposing device capabilities. Returning a boolean or promise could help developers debug, but risks leaking hardware information.
 - **Should global arbitration be standardized beyond per-element dedupe?** Current v1 proposal allows user agents to coalesce/suppress cross-element triggers and fire at most one haptic per target device per frame. We welcome feedback on whether a future level should define a deterministic cross-element winner algorithm.
 - **Is there developer interest in haptics device enumeration?** Though out of scope, we would like to understand interest. Exposing available devices or capabilities would enable richer experiences but introduces fingerprinting trade-offs that need careful evaluation.
