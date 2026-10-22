@@ -255,7 +255,7 @@ We evaluated five declarative CSS models. All work with any selector type (pseud
 | **A. Nested `@haptic`** (primary) | ✅ At-rule signals one-shot action | ✅ Same rule block | ✅ One-liner | ✅ Per-rule tracking |
 | **B. Standalone `@haptic-trigger`** | ✅ At-rule signals one-shot action | ❌ Separate block | ❌ Two blocks | ✅ Per-rule tracking |
 | **C. Computed-value property** | ❌ Property syntax implies ongoing state | ✅ Same rule block | ✅ Most concise | ❌ Same-value collision |
-| **D. Animation-trigger** | ⚠️ `haptic-name` reads as state, like C | ⚠️ Split (define + attach) | ❌ Define + attach | ⚠️ Workaround via distinct names |
+| **D. Animation-trigger** | ✅ Consistent with animation syntax | ✅ Can be colocated (though supports triggers from other elements) | ✅ Anonymous triggers supports one-liner | ✅ Trigger activation is independent of computed style changes |
 | **E. Transition-coupled** | ⚠️ Natural with real transitions; synthetic 0ms hack without | ✅ Same rule block | ❌ Synthetic transitions | ⚠️ Needs distinct visual props |
 
 ### JavaScript alternatives
