@@ -269,6 +269,13 @@ We evaluated five declarative CSS models. All work with any selector type (pseud
 - **Using the `:snapped` pseudo-class** versus a dedicated scroll-snap trigger surface — [CSS Scroll Snap 2](https://drafts.csswg.org/css-scroll-snap-2/#snapped) defines a `:snapped` pseudo-class that applies to snap children when the scroll container is snapped to them. In the primary model this naturally enables rules like `.slide:snapped { @haptic tick; }`. The main consideration is that `:snapped` is still a Working Draft and not yet widely implemented. If `:snapped` does not ship or is significantly delayed, a dedicated `scroll-snap-haptic` CSS property on the scroll container (e.g. `.carousel { scroll-snap-haptic: tick 0.6; }`) could be introduced as a self-contained fallback that does not depend on another in-progress spec.
 
 ## Accessibility, Privacy, and Security Considerations
+
+### Accessibility
+
+Haptics are supplementary feedback and must not be the only way a user learns an essential state or outcome. A request may produce no sensation because compatible hardware is unavailable, the current input device cannot play it, or feedback is suppressed. Effects such as `success` and `error` should reinforce visible and programmatically exposed feedback, not replace it, and an interface must remain understandable and operable without haptics.
+
+Users should be able to reduce or disable web-triggered haptics. User agents should respect relevant platform haptics and intensity settings where available and may use throttling, origin suppression, or browser controls to limit repeated or uncomfortable feedback. Authors should avoid excessive triggering and test that interactions remain usable without haptics.
+
 ### Privacy
 
 To avoid introducing a new fingerprinting vector, the API does not expose means to query haptics-capable devices, available effects, or whether a haptic was successfully played. No new media features are introduced in v1.
