@@ -6,7 +6,7 @@ browsers. Availability and enablement may vary by browser.
 
 The API and these instructions are subject to change as the proposal develops.
 
-The declarative CSS `@haptic` API described in the [Web Haptics
+The declarative CSS event-trigger API described in the [Web Haptics
 explainer](readme.md#declarative-api-css) is not implemented yet.
 
 ## Requirements
