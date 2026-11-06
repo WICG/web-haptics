@@ -68,8 +68,8 @@ launched above:
 
 The explainer may include proposed effects that are not yet implemented for the
 DevTrial. The current implementation accepts one of the effects `"hint"`,
-`"edge"`, `"tick"`, or `"align"`. The optional intensity is a number from `0.0`
-to `1.0` and defaults to `1.0`. See the [effect
+`"edge"`, `"tick"`, `"align"`, `"success"`, or `"error"`. The optional intensity
+is a number from `0.0` to `1.0` and defaults to `1.0`. See the [effect
 vocabulary](readme.md#effect-vocabulary) for the full proposed vocabulary and
 guidance on choosing an effect.
 
