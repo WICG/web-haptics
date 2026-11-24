@@ -73,9 +73,11 @@ to `1.0` and defaults to `1.0`. See the [effect
 vocabulary](readme.md#effect-vocabulary) for the full proposed vocabulary and
 guidance on choosing an effect.
 
-The API requires sticky user activation, so call it after a user interaction
-such as the button click above. The call returns `undefined` and intentionally
-does not report whether the device played the effect.
+The current DevTrial implementation requires sticky user activation; the
+explainer proposes transient user activation. Call during an
+activation-triggering interaction, such as the button click above, to work with
+both. The call returns `undefined` and intentionally does not report whether the
+device played the effect.
 
 ## Cross-origin frames
 
@@ -93,9 +95,9 @@ to a cross-origin frame:
   command line shown in `edge://version`.
 - If the API is present but no haptic plays, confirm that Windows is version
   24H2 or later and use the haptics-capable device for the interaction.
-- The API silently ignores calls without sticky user activation, calls blocked
-  by permissions policy, and calls for a most recent input device that is not
-  haptics-capable.
+- The current DevTrial silently ignores calls without sticky user activation,
+  calls blocked by permissions policy, and calls for a most recent input device
+  that is not haptics-capable.
 
 For the full API proposal, see the [Web Haptics
 explainer](readme.md#proposed-approach). For Chromium implementation details,

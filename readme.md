@@ -91,7 +91,7 @@ hint, edge, tick, and align provide feedback during an interaction, while succes
 
 ### Imperative API (JS)
 
-The imperative API is not gated behind a permission but requires [sticky user activation](https://developer.mozilla.org/en-US/docs/Web/Security/User_activation).
+The imperative API is not gated behind a permission but requires [transient user activation](https://html.spec.whatwg.org/multipage/interaction.html#transient-activation). Transient activation lasts for a short, user-agent-defined period after an activation-triggering input and may be consumed by other APIs.
 
 ```js
 navigator.playHaptics(effect, intensity);
@@ -101,7 +101,7 @@ navigator.playHaptics(effect, intensity);
 - `effect` — one of the predefined effect names: `"hint"`, `"edge"`, `"tick"`, `"align"`, `"success"`, `"error"`.
 - `intensity` *(optional)* — a normalized value between 0.0 and 1.0. Defaults to 1.0.
 
-The API always returns `undefined`. No haptic is played if the last input device is not haptics-capable, and the user agent does not reroute to another connected haptics-capable device. If sticky user activation has expired, the call is silently ignored.
+The API always returns `undefined`. No haptic is played if the last input device is not haptics-capable, and the user agent does not reroute to another connected haptics-capable device. If the document lacks transient user activation at the time of the call, the call is silently ignored.
 
 ### Declarative API (CSS)
 
@@ -164,7 +164,7 @@ Here, `#` means one or more comma-separated mappings — for example, `haptic: -
 Developers can use the Pointer Events API's [`pointerType`](https://www.w3.org/TR/pointerevents/#dom-pointerevent-pointertype) property to filter imperative haptic requests to desired input categories, such as mouse or pen:
 
 ```js
-button.addEventListener('pointerdown', (event) => {
+button.addEventListener('pointerup', (event) => {
   if (event.pointerType === 'mouse' || event.pointerType === 'pen') {
     navigator.playHaptics?.('align', 0.8);
   }
@@ -208,7 +208,7 @@ A horizontal photo carousel could provide a tactile tick when its pending snap t
 An app may want to use haptics when [dragging a sidebar divider to a snap point](https://github.com/w3c/webappswg/issues/138#issuecomment-3514522699). CSS can't express distance-threshold logic — this requires the imperative API:
 
 ```js
-// Sticky activation was granted by the pointerdown that started the drag.
+// Mouse pointerdown grants transient activation for a limited time.
 divider.addEventListener('pointermove', (e) => {
   const width = e.clientX;
   if (!snapped && Math.abs(width - SNAP_POINT) < 4) {
@@ -219,6 +219,8 @@ divider.addEventListener('pointermove', (e) => {
   }
 });
 ```
+
+This example can produce feedback while transient activation remains active after a mouse `pointerdown`. Touch and pen `pointerdown` do not grant activation, and long drags can outlast it; eligibility for these interactions remains an open question.
 
 ## Future Extensions
 
@@ -311,7 +313,7 @@ To avoid introducing a new fingerprinting vector, the API does not expose means 
 
 These controls should not be observable by web content to avoid introducing a new fingerprinting vector.
 
-**Imperative API:** Requires sticky user activation. No permission gate.
+**Imperative API:** Requires transient user activation at the time of each call. No permission gate.
 
 **Declarative API:** Haptic requests must be causally associated with user input. Selector changes alone do not trigger haptics. CSS Animation Triggers determines which events can fire triggers; haptics-specific activation checks, including treatment of script-generated events, remain to be defined.
 
@@ -327,7 +329,8 @@ These controls should not be observable by web content to avoid introducing a ne
 ## Open Questions
 
 - **Should any [future extension](#future-extensions) be promoted to v1?** Additional predefined effects and other deferred extensions are listed above. If any is critical for initial adoption, we would like to hear which and why.
-- **What haptics-specific activation checks should apply to event triggers?** The proposal limits haptics to trigger activations causally associated with user input. How should this requirement interact with Animation Triggers' event eligibility rules, script-generated events, and sticky user activation?
+- **What haptics-specific activation checks should apply to event triggers?** The proposal limits haptics to trigger activations causally associated with user input. How should this requirement interact with Animation Triggers' event eligibility rules, script-generated events, and transient user activation?
+- **How should imperative haptics cover interactions without transient activation?** First touch or pen press/drag and user-driven scrolling do not necessarily grant transient activation, and long interactions can outlast it. Should a separately defined, time-limited haptics-specific allowance cover these cases?
 - **Should a user-preference media feature be added in a future phase?** v1 introduces no media query. A possible extension is a coarse preference signal (e.g. `prefers-haptics: reduce | no-preference`) if there is concrete use-case and privacy review support.
 - **Which additional event sources should CSS Animation Triggers support for haptics?** Scroll-snap events such as `scrollsnapchanging` are not currently supported trigger sources. Their integration and eligibility rules need to be defined to cover the [photo carousel scenario](#photo-carousel).
 - **Feedback on the predefined effect vocabulary?** The current set (`hint`, `edge`, `tick`, `align`, `success`, `error`) is intentionally small. Feedback is needed on whether these effects cover the most common interaction patterns and map well to native haptic primitives across platforms.
